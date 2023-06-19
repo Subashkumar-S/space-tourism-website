@@ -20,7 +20,7 @@ function Navbar(){
                 </button>
                 <ul className={`w-[57%] flex justify-around text-white md1:block md1:fixed md1:top-0 ${toggle ? 'md1:right-0' : 'md1:right-[-100vw]'} md1:w-[68%] md1:h-screen md1:px-8 bg-[#ffffff14] backdrop-blur-lg duration-500 z-20`}>
                     <li>
-                        <Link to="/" className='border-b-2 border-transparent hover:border-white py-7 inline-block'>
+                        <Link to="/index.html" className='border-b-2 border-transparent hover:border-white py-7 inline-block'>
                             <span className='pr-[1vw] font-bold md:hidden'>00</span>
                             HOME
                         </Link>
