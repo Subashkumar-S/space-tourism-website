@@ -61,7 +61,7 @@ I have learned and practice ReactJs and Tailwind CSS by building this project.
 To practice ReactJs more helps me to continue focusing on in future projects.
 ### Useful resources
 
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs/installation) - This helped me integrate Tailwind CSS in react app and identify CSS properties to be used.
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs/installation) - This helped me to integrate Tailwind CSS in react app and identify CSS properties to be used.
 - [React Documentation](https://react.dev/learn) - This article helps me to create react app and nest components. I also learned render components response to events.
 -[ReactJs Router](https://www.geeksforgeeks.org/reactjs-router/) - This article helps to understand React Router and components to create navbar and route between pages.
 
