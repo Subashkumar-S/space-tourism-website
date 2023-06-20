@@ -15,12 +15,12 @@ const Technology = () => {
     return (
         <section className='w-full min-h-screen bg-technology-desktop text-primary-white bg-cover md:bg-technology-tablet sm:bg-technology-mobile'>
             <Navbar/>
-            <main className=' md:text-center'>
-                <h5 className='font-Barlow tracking-widest text-active-white uppercase text-xl pb-8 lg:pl-[11.5vw] lg:text-[2vw] lg:pt-[10vh]'>
-                    <span className='text-primary-white pr-2'>02</span>
+            <main className=''>
+                <h5 className='font-Barlow tracking-widest sm:text-center sm:pl-0 text-active-white uppercase text-xl pl-8 pb-8 lg:pl-[11.5vw] lg:text-[2vw] lg:pt-[10vh]'>
+                    <span className='text-primary-white pr-2'>03</span>
                     Space launch 101
                 </h5>
-                <div className='flex flex-col gap-10 lg:flex-row-reverse lg:fixed lg:h-[60vh] lg:bottom-[11vh] lg:ml-[11.5vw] lg:gap-[15vw]'>
+                <div className='flex flex-col gap-10 lg:flex-row-reverse lg:fixed lg:h-[60vh] lg:bottom-[11vh] lg:ml-[11.5vw] lg:gap-[15vw] md:text-center'>
                     <div className='w-full flex flex-col  justify-center items-center lg:w-1/2 lg:bg-'>
                         <img src={technologyImages[technologyIndex]} alt={data.technology[technologyIndex].name}  className='h-[31vh] w-full lg:h-[59vh]' />
                     </div>

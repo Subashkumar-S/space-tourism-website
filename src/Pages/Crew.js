@@ -15,9 +15,9 @@ const Crew = () => {
         Anousheh
     ]
     return (
-        <section className='w-full min-h-screen bg-crew-desktop text-primary-white bg-cover md:bg-crew-tablet sm:bg-crew-mobile px-4 '>
+        <section className='w-full min-h-screen bg-crew-desktop text-primary-white bg-cover md:bg-crew-tablet sm:bg-crew-mobile '>
             <Navbar/>
-            <main className='md0:w-[80%] m-auto text-center '>
+            <main className='md0:w-[80%] m-auto text-center px-4'>
                 <h5 className='font-Barlow tracking-widest text-active-white uppercase text-xl pb-8 md0:text-start  lg:text-[2vw] lg:pt-[10vh]'>
                     <span className='text-primary-white pr-2'>02</span>
                     Meet your crew

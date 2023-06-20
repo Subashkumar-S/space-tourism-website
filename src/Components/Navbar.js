@@ -16,6 +16,7 @@ function Navbar(){
                 <a href='./'>
                     <Logo className='ml-7 w-12 aspect-auto'/>
                 </a>
+                <div className='border-solid border-[1px] border-amber-50 border-opacity-50 md0:w-[40%] md0:ml-8 md0:-mr-[1vw] z-50  md:border-none'></div>
                 <button className='w-6 hidden md1:block md1:absolute top-8 right-6 z-40' onClick={handleToggle}>
                     {toggle ? <Close /> :<Hamburger/> }
                 </button>
