@@ -26,11 +26,11 @@ Users should be able to:
 - View each page and be able to toggle between the tabs to see new information
 
 ### Screenshot
-
+-Desktop screenshot
 ![](./screenshot/desktop.png)
-
+-Tablet screenshot
 ![](./screenshot/tablet.png)
-
+-Mobile screenshot
 ![](./screenshot/mobile.png)
 
 
