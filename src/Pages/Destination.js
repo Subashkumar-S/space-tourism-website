@@ -16,12 +16,12 @@ const Destination = (props) => {
     return (
         <section className='w-full  min-h-screen bg-destination-mobile md:bg-destination-tablet lg:bg-destination-desktop bg-cover bg-no-repeat'>
             <Navbar/>
-            <main className='text-primary-white sm:text-center sm:px-4 pb-8 '>
+            <main className='text-primary-white sm:text-center sm:px-4 pb-8 md0:px-16'>
                 <h5 className='uppercase lg:pt-[9vh] md:pl-[5vw] md:tracking-widest lg:pl-[11.5vw] md:text-[4vw] lg:text-[2vw] font-Barlow'>
                     <span className='pr-2'>01</span>
                     <span className='text-active-white'>Pick your destination</span>
                 </h5>
-                <div className='flex flex-col items-center pt-4 gap-8 px-4 md:mx-[10vw] md:text-center lg:flex-row lg:justify-between lg:gap-40 lg:h-[52vh] lg:fixed lg:bottom-[13vh] lg:ml-[16vw] lg:mr-[11vw] '>
+                <div className='flex flex-col items-center pt-4 gap-8 px-4 md:text-center lg:flex-row lg:justify-between lg:gap-40 lg:h-[52vh] lg:fixed lg:bottom-[13vh] lg:ml-[16vw] lg:mr-[11vw]'>
                     <div className='w-[45vw] h-[45vw] lg:w-[30vw] lg:h-[30vw]'>
                         <img src={planetImages[planetNumber]} alt='Moon' />
                     </div>

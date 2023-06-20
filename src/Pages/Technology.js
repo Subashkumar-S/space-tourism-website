@@ -24,7 +24,7 @@ const Technology = () => {
                     <div className='w-full flex flex-col  justify-center items-center lg:w-1/2 lg:bg-'>
                         <img src={technologyImages[technologyIndex]} alt={data.technology[technologyIndex].name}  className='h-[31vh] w-full lg:h-[59vh]' />
                     </div>
-                    <div className='px-4 lg:flex gap-8 lg:w-1/2'>
+                    <div className='px-4 lg:flex gap-8 lg:w-1/2 sm:px-4 md0:px-[20vw] lg:px-0'>
                         <div className='flex justify-center gap-4 pb-4 font-Bellefair text-[18px] font-black text-active-white lg:flex-col'>
                             <button onClick={() => setTechnologyIndex(0)} className={`w-8 aspect-square rounded-full border-[1px] lg:w-10 ${technologyIndex === 0 ? 'bg-active-white text-primary-black' : 'border-white border-opacity-50 hover:border-opacity-100 bg-transparent'}`}>1</button>
                             <button onClick={() => setTechnologyIndex(1)} className={`w-8 aspect-square rounded-full border-[1px] lg:w-10 ${technologyIndex === 1 ? 'bg-active-white text-primary-black' : 'border-white border-opacity-50 hover:border-opacity-100 bg-transparent'}`}>2</button>
