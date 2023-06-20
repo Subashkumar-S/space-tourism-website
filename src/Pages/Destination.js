@@ -26,19 +26,19 @@ const Destination = (props) => {
                         <img src={planetImages[planetNumber]} alt='Moon' />
                     </div>
                     <div className='flex flex-col gap-8 lg:w-[30vw] lg:min-h-[52vh]'>
-                        <div className='border-b border-b-solid border-b-active-white'>
+                        <div className='border-b border-b-solid border-b-active-white border-opacity-50'>
                             <ul className='flex justify-center gap-4 lg:justify-normal lg:gap-8 font-Barlow  md:text-[3vw]'>
                                 <li>
-                                    <button onClick={() => setPlanetNumber(0)} className='uppercase border-b-2 border-b-solid border-primary-white '>Moon</button>
+                                    <button onClick={() => setPlanetNumber(0)} className={`uppercase ${planetNumber === 0 ? 'border-b-2 border-b-solid border-active-white text-active-white' : 'hover:border-b-2 hover:border-b-solid hover:border-primary-white hover:border-opacity-50'}`}>Moon</button>
                                 </li>
                                 <li>
-                                    <button onClick={() => setPlanetNumber(1)} className='uppercase'>Mars</button>
+                                    <button onClick={() => setPlanetNumber(1)} className={`uppercase ${planetNumber === 1 ? 'border-b-2 border-b-solid border-active-white text-active-white' : 'hover:border-b-2 hover:border-b-solid hover:border-primary-white hover:border-opacity-50'}`}>Mars</button>
                                 </li>
                                 <li>
-                                    <button onClick={() => setPlanetNumber(2)} className='uppercase '>Europa</button>
+                                    <button onClick={() => setPlanetNumber(2)} className={`uppercase ${planetNumber === 2 ? 'border-b-2 border-b-solid border-active-white text-active-white' : 'hover:border-b-2 hover:border-b-solid hover:border-primary-white hover:border-opacity-50'}`}>Europa</button>
                                 </li>
                                 <li>
-                                    <button onClick={() => setPlanetNumber(3)} className='uppercase '>Titan</button>
+                                    <button onClick={() => setPlanetNumber(3)} className={`uppercase ${planetNumber === 3 ? 'border-b-2 border-b-solid border-active-white text-active-white' : 'hover:border-b-2 hover:border-b-solid hover:border-primary-white hover:border-opacity-50'}`}>Titan</button>
                                 </li>
                             </ul>
                             <h3 className='uppercase text-[15vw] font-Bellefair text-active-white lg:text-[7vw] '>{data.destinations[planetNumber].name}</h3>
