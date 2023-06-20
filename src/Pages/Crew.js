@@ -18,15 +18,15 @@ const Crew = () => {
         <section className='w-full min-h-screen bg-crew-desktop text-primary-white bg-cover md:bg-crew-tablet sm:bg-crew-mobile px-4 '>
             <Navbar/>
             <main className='md0:w-[80%] m-auto text-center '>
-                <h5 className='font-Barlow tracking-widest text-active-white uppercase text-xl pb-8 md0:text-start lg:pl-[10vw] lg:text-[2vw] lg:pt-[10vh]'>
+                <h5 className='font-Barlow tracking-widest text-active-white uppercase text-xl pb-8 md0:text-start  lg:text-[2vw] lg:pt-[10vh]'>
                     <span className='text-primary-white pr-2'>02</span>
                     Meet your crew
                 </h5>
-                <div className='flex flex-col gap-10 md0:flex-col-reverse lg:flex-row-reverse lg:h-[70vh] lg:items-center lg:gap-16 lg:pl-[10vw] lg:fixed lg:bottom-0'>
-                    <div className='w-full  flex flex-col  justify-center items-center'>
+                <div className='flex flex-col gap-10 md0:flex-col-reverse lg:flex-row-reverse lg:h-[70vh] lg:items-center  lg:pl-[5vw] lg:gap-40 lg:fixed lg:bottom-0'>
+                    <div className='w-full  flex flex-col  justify-center items-center sm:border-b-[1px] border-b-solid border-b-active-white border-opacity-50'>
                         <img src={crewImages[crewNumber]} alt='Victor' className='h-[31vh] w-[50vw] md:h-full lg:h-[80vh]'/>
                     </div>
-                    <div className='flex sm:flex-col flex-col-reverse lg:gap-20 md:gap-8 lg:text-start lg:justify-around lg:h-full' >
+                    <div className='flex sm:flex-col flex-col-reverse md:gap-8 lg:text-start lg:justify-around lg:h-full' >
                         <div className='flex justify-center gap-4 pb-4 lg:justify-start'>
                             <button onClick={() => setCrewNumber(0)} className={`w-4 aspect-square rounded-full bg-[#545353]  ${crewNumber === 0 ? 'bg-active-white' : 'hover:bg-active-white hover:bg-opacity-50'}`}></button>
                             <button onClick={() => setCrewNumber(1)} className={`w-4 aspect-square rounded-full bg-[#545353] ${crewNumber === 1 ? 'bg-active-white' : 'hover:bg-active-white hover:bg-opacity-50'}`}></button>

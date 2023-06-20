@@ -17,7 +17,7 @@ const Destination = (props) => {
         <section className='w-full  min-h-screen bg-destination-mobile md:bg-destination-tablet lg:bg-destination-desktop bg-cover bg-no-repeat'>
             <Navbar/>
             <main className='text-primary-white sm:text-center sm:px-4 pb-8 md0:px-16'>
-                <h5 className='uppercase lg:pt-[9vh] md:pl-[5vw] md:tracking-widest lg:pl-[11.5vw] md:text-[4vw] lg:text-[2vw] font-Barlow'>
+                <h5 className='uppercase lg:pt-[9vh] md:pl-[5vw] md:tracking-widest lg:pl-[7vw] md:text-[4vw] lg:text-[2vw] font-Barlow '>
                     <span className='pr-2'>01</span>
                     <span className='text-active-white'>Pick your destination</span>
                 </h5>
