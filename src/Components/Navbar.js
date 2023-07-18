@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import {Link, useLocation} from 'react-router-dom'
-import {ReactComponent as Logo} from '/home/subashkumar/Subash/Projects/Frontend_Mentor_Challenges/space-tourism/src/assets/shared/logo.svg'
-import {ReactComponent as Hamburger} from '/home/subashkumar/Subash/Projects/Frontend_Mentor_Challenges/space-tourism/src/assets/shared/icon-hamburger.svg'
-import {ReactComponent as Close} from '/home/subashkumar/Subash/Projects/Frontend_Mentor_Challenges/space-tourism/src/assets/shared/icon-close.svg'
+import {ReactComponent as Logo} from '../assets/shared/logo.svg'
+import {ReactComponent as Hamburger} from '../assets/shared/icon-hamburger.svg'
+import {ReactComponent as Close} from '../assets/shared/icon-close.svg'
 
 function Navbar(){
     const[toggle, setToggle] = useState(false);
