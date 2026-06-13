@@ -9,6 +9,7 @@ import {
 } from "./middleware/session";
 import { errorHandler, notFound } from "./middleware/error";
 import { healthRouter } from "./routes/health";
+import { destinationsRouter } from "./routes/destinations";
 import { env } from "./config/env";
 
 export function createApp() {
@@ -44,8 +45,9 @@ export function createApp() {
   app.use(passportSession);
 
   app.use("/api/health", healthRouter);
+  app.use("/api/destinations", destinationsRouter);
   // Feature routers mount here as milestones land:
-  //   /api/destinations (M1) · /api/auth (M2) · /api/bookings (M3) · /api/admin (M4)
+  //   /api/auth (M2) · /api/bookings (M3) · /api/admin (M4)
 
   app.use(notFound);
   app.use(errorHandler);

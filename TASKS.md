@@ -45,20 +45,20 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
 - [x] `server/.env.example`; root `.gitignore` (server/.env, dist, node_modules).
 - [x] Verified end-to-end: health 200, 404 JSON, CORS credentials header.
 
-## M1 — Data layer
+## M1 — Data layer ✅
 
-- [ ] `models/Destination.ts` (slug, name, description, distance, travel,
+- [x] `models/Destination.ts` (slug, name, description, distance, travel,
       pricePerSeat¢, imageKey).
-- [ ] `models/Launch.ts` (destination ref, departAt, durationLabel, pricePerSeat¢,
+- [x] `models/Launch.ts` (destination ref, departAt, durationLabel, pricePerSeat¢,
       seatsTotal, seatsAvailable, status: scheduled|full|departed|cancelled).
-- [ ] `seed.ts` — lift the 4 destinations from `client/src/Components/data.js`;
+- [x] `seed.ts` — lift the 4 destinations from `client/src/Components/data.js`;
       generate future launches with capacity + price; `npm run seed`.
-- [ ] Public reads: `GET /api/destinations`, `/api/destinations/:slug`,
+- [x] Public reads: `GET /api/destinations`, `/api/destinations/:slug`,
       `/api/destinations/:slug/launches` (upcoming, non-full).
-- [ ] Redis **cache-aside** for destination/launch lists (short TTL).
-- [ ] Client: `src/api/client.js` (fetch wrapper, `credentials:"include"`,
+- [x] Redis **cache-aside** for destination/launch lists (short TTL).
+- [x] Client: `src/api/client.js` (fetch wrapper, `credentials:"include"`,
       `REACT_APP_API_BASE_URL`); `imageKey → bundled asset` map.
-- [ ] Wire `client/src/Pages/Destination.js` to the API (drop `data.js`); keep Framer
+- [x] Wire `client/src/Pages/Destination.js` to the API (drop `data.js`); keep Framer
       Motion + the `01` treatment; loading/error states.
 
 ## M2 — Auth (local + Google)
