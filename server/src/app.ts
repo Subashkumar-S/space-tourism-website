@@ -10,6 +10,8 @@ import {
 import { errorHandler, notFound } from "./middleware/error";
 import { healthRouter } from "./routes/health";
 import { destinationsRouter } from "./routes/destinations";
+import { authRouter } from "./routes/auth";
+import { configurePassport } from "./config/passport";
 import { env } from "./config/env";
 
 export function createApp() {
@@ -40,14 +42,16 @@ export function createApp() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  configurePassport();
   app.use(sessionMiddleware);
   app.use(passportInit);
   app.use(passportSession);
 
   app.use("/api/health", healthRouter);
   app.use("/api/destinations", destinationsRouter);
+  app.use("/api/auth", authRouter);
   // Feature routers mount here as milestones land:
-  //   /api/auth (M2) · /api/bookings (M3) · /api/admin (M4)
+  //   /api/bookings (M3) · /api/admin (M4)
 
   app.use(notFound);
   app.use(errorHandler);

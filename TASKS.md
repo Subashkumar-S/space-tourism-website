@@ -61,19 +61,21 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
 - [x] Wire `client/src/Pages/Destination.js` to the API (drop `data.js`); keep Framer
       Motion + the `01` treatment; loading/error states.
 
-## M2 — Auth (local + Google)
+## M2 — Auth (local + Google) ✅
 
-- [ ] `models/User.ts` (name, email unique, passwordHash optional, googleId sparse
+- [x] `models/User.ts` (name, email unique, passwordHash optional, googleId sparse
       unique, role) + Express `User`/session type augmentation in `server/src/types/`.
-- [ ] Passport **local** strategy (bcrypt) + **Google** strategy
-      (`passport-google-oauth20`, callback `/api/auth/google/callback`).
-- [ ] **Account linking by email**: googleId → else email (attach googleId) → else
+- [x] Passport **local** strategy (bcryptjs) + **Google** strategy
+      (`passport-google-oauth20`, callback `/api/auth/google/callback`) — Google
+      registers only when `GOOGLE_CLIENT_ID/SECRET` are set.
+- [x] **Account linking by email**: googleId → else email (attach googleId) → else
       create. `serialize/deserializeUser` store Mongo `_id`.
-- [ ] Auth routes: `POST /api/auth/signup|login|logout`, `GET /api/auth/me`,
+- [x] Auth routes: `POST /api/auth/signup|login|logout`, `GET /api/auth/me`,
       `GET /api/auth/google` + callback. Zod validation; rate-limit auth routes.
-- [ ] Replace the M0 stubs with real `checkAuthenticated` + `requireAdmin`.
-- [ ] Client: `AuthContext`, `/login` + `/signup` (+ "Continue with Google"),
-      `ProtectedRoute`, navbar auth state, **resume pending booking after login**.
+- [x] Replace the M0 stubs with real `checkAuthenticated` + `requireAdmin`.
+- [x] Client: `AuthContext`, `/login` + `/signup` (+ "Continue with Google"),
+      `ProtectedRoute`, navbar auth state. (returnTo mechanism ready; pending-booking
+      resume gets exercised in M3.)
 
 ## M3 — Booking + Stripe (the centerpiece)
 

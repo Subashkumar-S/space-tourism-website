@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import {Link, useLocation} from 'react-router-dom'
+import {Link, useLocation, useNavigate} from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import {ReactComponent as Logo} from '../assets/shared/logo.svg'
 import {ReactComponent as Hamburger} from '../assets/shared/icon-hamburger.svg'
 import {ReactComponent as Close} from '../assets/shared/icon-close.svg'
@@ -7,8 +8,14 @@ import {ReactComponent as Close} from '../assets/shared/icon-close.svg'
 function Navbar(){
     const[toggle, setToggle] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
+    const { user, logout } = useAuth();
     const handleToggle = () => {
         setToggle(!toggle);
+    }
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
     }
     return (
         <header>
@@ -45,6 +52,21 @@ function Navbar(){
                             TECHNOLOGY
                         </Link>
                     </li>
+                    {user ? (
+                        <li>
+                            <button onClick={handleLogout} className='border-b-2 border-transparent hover:border-white hover:border-opacity-50 py-7 inline-block uppercase text-left'>
+                                <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
+                                LOG OUT
+                            </button>
+                        </li>
+                    ) : (
+                        <li>
+                            <Link to="/login" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/login' || location.pathname === '/signup' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
+                                <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
+                                LOG IN
+                            </Link>
+                        </li>
+                    )}
                 </ul>
             </nav>
         </header>
