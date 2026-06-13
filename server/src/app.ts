@@ -11,6 +11,8 @@ import { errorHandler, notFound } from "./middleware/error";
 import { healthRouter } from "./routes/health";
 import { destinationsRouter } from "./routes/destinations";
 import { authRouter } from "./routes/auth";
+import { bookingsRouter } from "./routes/bookings";
+import { webhookRouter } from "./routes/webhook";
 import { configurePassport } from "./config/passport";
 import { env } from "./config/env";
 
@@ -31,13 +33,12 @@ export function createApp() {
     })
   );
 
-  // ── Stripe webhook (M3) mounts HERE, before express.json(), so the handler can
-  //    verify the signature against the raw request body:
-  //    app.use(
-  //      "/api/webhooks/stripe",
-  //      express.raw({ type: "application/json" }),
-  //      stripeWebhookRouter
-  //    );
+  // Stripe webhook needs the raw body for signature verification — mount BEFORE json.
+  app.use(
+    "/api/webhooks/stripe",
+    express.raw({ type: "application/json" }),
+    webhookRouter
+  );
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -50,8 +51,9 @@ export function createApp() {
   app.use("/api/health", healthRouter);
   app.use("/api/destinations", destinationsRouter);
   app.use("/api/auth", authRouter);
+  app.use("/api/bookings", bookingsRouter);
   // Feature routers mount here as milestones land:
-  //   /api/bookings (M3) · /api/admin (M4)
+  //   /api/admin (M4)
 
   app.use(notFound);
   app.use(errorHandler);

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
 import { apiGet } from '../api/client'
 import destinationImages from '../utils/destinationImages'
+import { formatUSD } from '../utils/format'
 
 const Destination = () => {
     const [destinations, setDestinations] = useState([]);
@@ -74,6 +76,9 @@ const Destination = () => {
                                 <h4 className='text-active-white text-[10vw] md:text-[4vw] lg:text-[1.8vw] font-Bellefair'>{planet.travel}</h4>
                             </div>
                         </div>
+                        <Link to={`/book/${planet.slug}`} className='uppercase tracking-widest font-Barlow text-center bg-active-white text-primary-black py-3 px-6 rounded hover:bg-primary-white transition'>
+                            Book this trip — {formatUSD(planet.pricePerSeat)}/seat
+                        </Link>
                     </div>
                 </div>
                 )}

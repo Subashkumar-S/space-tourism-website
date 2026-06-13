@@ -77,23 +77,23 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
       `ProtectedRoute`, navbar auth state. (returnTo mechanism ready; pending-booking
       resume gets exercised in M3.)
 
-## M3 — Booking + Stripe (the centerpiece)
+## M3 — Booking + Stripe (the centerpiece) ✅
 
-- [ ] `models/Booking.ts` (user, launch, seats, passengers[], amount¢, currency,
+- [x] `models/Booking.ts` (user, launch, seats, passengers[], amount¢, currency,
       status: pending|confirmed|cancelled|refunded, stripeSessionId,
       stripePaymentIntentId, expiresAt, createdAt/confirmedAt/cancelledAt).
-- [ ] `POST /api/bookings` — **atomic reserve**
-      `Launch.findOneAndUpdate({seatsAvailable:{$gte:seats},status:"scheduled"},
-      {$inc:{seatsAvailable:-seats}})` → 409 if no match → pending booking (+expiresAt)
-      → Stripe Checkout Session → return `url`. Rate-limited.
-- [ ] Redis `booking:pending:{id}` TTL key (~10 min) mirroring the hold.
-- [ ] `POST /api/webhooks/stripe` — **raw-body, signature-verified, idempotent**:
+- [x] `POST /api/bookings` — **atomic reserve** (`reserveSeats` in `lib/seats.ts`)
+      → 409 if no match → pending booking (+expiresAt) → Stripe Checkout Session →
+      return `url`. Rate-limited; rolls back the hold if checkout creation fails.
+- [x] Redis `booking:pending:{id}` TTL key mirroring the hold.
+- [x] `POST /api/webhooks/stripe` — **raw-body, signature-verified, idempotent**:
       `checkout.session.completed` → confirm + clear hold;
       `checkout.session.expired` → cancel + **restore seats**.
-- [ ] **Sweeper** — periodic job: `pending` past `expiresAt` → cancel + restore seats.
-- [ ] `GET /api/bookings/me` (My Trips).
-- [ ] Client: booking flow (launch + seats + passenger names) → Stripe redirect →
-      return handling; **My Trips** page.
+- [x] **Sweeper** — periodic job: `pending` past `expiresAt` → cancel + restore seats.
+- [x] `GET /api/bookings/me` (My Trips).
+- [x] Client: booking flow (`/book/:slug`, launch + passengers) → Stripe redirect →
+      return handling; **My Trips** page. (Stripe opt-in via `STRIPE_SECRET_KEY`;
+      oversell-proof reservation proven by `npm run loadtest`.)
 
 ## M4 — Refunds, admin, polish
 

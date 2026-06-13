@@ -6,6 +6,9 @@ import Crew from './Pages/Crew'
 import Technology from "./Pages/Technology";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import Booking from "./Pages/Booking";
+import MyTrips from "./Pages/MyTrips";
+import ProtectedRoute from "./Components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 const App = () =>{
@@ -19,6 +22,8 @@ const App = () =>{
                     <Route path='/technology' element={<Technology/>}></Route>
                     <Route path='/login' element={<Login/>}></Route>
                     <Route path='/signup' element={<Signup/>}></Route>
+                    <Route path='/book/:slug' element={<ProtectedRoute><Booking/></ProtectedRoute>}></Route>
+                    <Route path='/my-trips' element={<ProtectedRoute><MyTrips/></ProtectedRoute>}></Route>
                 </Routes>
             </Router>
         </AuthProvider>

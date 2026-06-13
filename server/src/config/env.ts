@@ -22,6 +22,13 @@ const envSchema = z.object({
   GOOGLE_CALLBACK_URL: z
     .string()
     .default("http://localhost:5000/api/auth/google/callback"),
+  // Stripe (test mode). When STRIPE_SECRET_KEY is set the booking pay flow is live;
+  // otherwise POST /api/bookings returns 503 and the rest of the app still runs.
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  // Minutes a pending booking holds its seats before the sweeper releases them.
+  // Stripe Checkout sessions require >= 30 min expiry, so keep this >= 30.
+  BOOKING_HOLD_MINUTES: z.coerce.number().min(30).default(30),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -38,4 +45,5 @@ export const env = {
   googleEnabled: Boolean(
     parsed.data.GOOGLE_CLIENT_ID && parsed.data.GOOGLE_CLIENT_SECRET
   ),
+  stripeEnabled: Boolean(parsed.data.STRIPE_SECRET_KEY),
 };

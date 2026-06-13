@@ -53,12 +53,19 @@ function Navbar(){
                         </Link>
                     </li>
                     {user ? (
-                        <li>
-                            <button onClick={handleLogout} className='border-b-2 border-transparent hover:border-white hover:border-opacity-50 py-7 inline-block uppercase text-left'>
-                                <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
-                                LOG OUT
-                            </button>
-                        </li>
+                        <>
+                            <li>
+                                <Link to="/my-trips" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/my-trips' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
+                                    <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
+                                    MY TRIPS
+                                </Link>
+                            </li>
+                            <li>
+                                <button onClick={handleLogout} className='border-b-2 border-transparent hover:border-white hover:border-opacity-50 py-7 inline-block uppercase text-left'>
+                                    LOG OUT
+                                </button>
+                            </li>
+                        </>
                     ) : (
                         <li>
                             <Link to="/login" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/login' || location.pathname === '/signup' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
