@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "seed": "tsx src/seed.ts",
     "loadtest": "tsx src/scripts/loadtestSeats.ts",
+    "stripe:pay": "tsx src/scripts/createPayment.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
