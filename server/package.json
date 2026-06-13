@@ -9,7 +9,9 @@
     "start": "node dist/index.js",
     "seed": "tsx src/seed.ts",
     "loadtest": "tsx src/scripts/loadtestSeats.ts",
-    "stripe:pay": "tsx src/scripts/createPayment.ts",
+    "stripe:pay": "tsx src/scripts/stripe/createPayment.ts",
+    "stripe:products": "tsx src/scripts/stripe/createProducts.ts",
+    "stripe:cleanup": "tsx src/scripts/stripe/cleanup.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
