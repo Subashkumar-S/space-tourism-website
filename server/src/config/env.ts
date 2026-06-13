@@ -29,6 +29,9 @@ const envSchema = z.object({
   // Minutes a pending booking holds its seats before the sweeper releases them.
   // Stripe Checkout sessions require >= 30 min expiry, so keep this >= 30.
   BOOKING_HOLD_MINUTES: z.coerce.number().min(30).default(30),
+  // Email (optional). When RESEND_API_KEY is set, confirmation emails are sent.
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().default("Space Tourism <onboarding@resend.dev>"),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -46,4 +49,5 @@ export const env = {
     parsed.data.GOOGLE_CLIENT_ID && parsed.data.GOOGLE_CLIENT_SECRET
   ),
   stripeEnabled: Boolean(parsed.data.STRIPE_SECRET_KEY),
+  emailEnabled: Boolean(parsed.data.RESEND_API_KEY),
 };

@@ -95,17 +95,18 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
       return handling; **My Trips** page. (Stripe opt-in via `STRIPE_SECRET_KEY`;
       oversell-proof reservation proven by `npm run loadtest`.)
 
-## M4 — Refunds, admin, polish
+## M4 — Refunds, admin, polish ✅
 
-- [ ] `POST /api/bookings/:id/cancel` — `stripe.refunds.create({payment_intent})` →
-      `refunded` + restore seats.
-- [ ] **Admin API** (`requireAdmin`): destinations `GET/PATCH`; launches
-      `GET/POST/PATCH/DELETE` (capacity edits respect booked seats; cancel →
-      refund/notify or block); bookings `GET` + `POST /:id/refund`;
+- [x] `POST /api/bookings/:id/cancel` — refund (if confirmed) or cancel (if pending,
+      expiring the Stripe session) → restore seats. Shared `cancelOrRefundBooking`.
+- [x] **Admin API** (`requireAdmin`): destinations `GET/PATCH`; launches
+      `GET/POST/PATCH/DELETE` (capacity edits respect booked seats; DELETE cancels a
+      launch + refunds its bookings); bookings `GET` + `POST /:id/refund`;
       `GET /api/admin/stats` (revenue, bookings, seats sold, popular destinations).
-- [ ] **Admin UI** (CRUD panels + stats), admin-only route.
-- [ ] Confirmation **email** on payment (Resend); validation; friendly error states;
-      verify rate limits.
+- [x] **Admin UI** (`/admin`, stats/destinations/launches/bookings tabs), admin-only
+      route (`AdminRoute`); `npm run make-admin -- <email>` to promote a user.
+- [x] Confirmation **email** on payment (Resend, opt-in); My Trips cancel button;
+      launch-cache invalidation on seat changes; zod validation throughout.
 
 ## M5 — Ship
 

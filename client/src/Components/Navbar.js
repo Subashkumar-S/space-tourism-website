@@ -60,6 +60,14 @@ function Navbar(){
                                     MY TRIPS
                                 </Link>
                             </li>
+                            {user.role === 'admin' && (
+                                <li>
+                                    <Link to="/admin" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname.startsWith('/admin') ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
+                                        <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>05</span>
+                                        ADMIN
+                                    </Link>
+                                </li>
+                            )}
                             <li>
                                 <button onClick={handleLogout} className='border-b-2 border-transparent hover:border-white hover:border-opacity-50 py-7 inline-block uppercase text-left'>
                                     LOG OUT

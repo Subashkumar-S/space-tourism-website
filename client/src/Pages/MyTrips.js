@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
-import { apiGet } from '../api/client'
+import { apiGet, apiPost } from '../api/client'
 import destinationImages from '../utils/destinationImages'
 import { formatUSD, formatLaunchDate } from '../utils/format'
 
@@ -26,6 +26,20 @@ export default function MyTrips() {
       .catch((err) => { if (active) { setError(err.message); setStatus('error') } })
     return () => { active = false }
   }, [])
+
+  const [cancelling, setCancelling] = useState(null)
+  const onCancel = async (id) => {
+    if (!window.confirm('Cancel this booking? Confirmed trips are refunded.')) return
+    setCancelling(id)
+    try {
+      const { status: newStatus } = await apiPost(`/bookings/${id}/cancel`, {})
+      setTrips((ts) => ts.map((t) => (t.id === id ? { ...t, status: newStatus } : t)))
+    } catch (e) {
+      alert(e.message)
+    } finally {
+      setCancelling(null)
+    }
+  }
 
   return (
     <section className='w-full min-h-screen bg-home-mobile md:bg-home-tablet lg:bg-home-desktop bg-cover bg-no-repeat bg-center'>
@@ -71,6 +85,12 @@ export default function MyTrips() {
                   <p className='font-Barlow text-primary-white/60 text-sm mt-1'>
                     Passengers: {t.passengers.join(', ')}
                   </p>
+                  {(t.status === 'pending' || t.status === 'confirmed') && (
+                    <button onClick={() => onCancel(t.id)} disabled={cancelling === t.id}
+                      className='mt-2 uppercase text-xs tracking-widest font-Barlow border border-red-300/50 text-red-300 rounded px-3 py-1 hover:bg-red-300/10 disabled:opacity-50'>
+                      {cancelling === t.id ? 'Cancelling…' : t.status === 'confirmed' ? 'Cancel & refund' : 'Cancel'}
+                    </button>
+                  )}
                 </div>
               </article>
             ))}

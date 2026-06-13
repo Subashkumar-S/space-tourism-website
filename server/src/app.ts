@@ -13,6 +13,7 @@ import { destinationsRouter } from "./routes/destinations";
 import { authRouter } from "./routes/auth";
 import { bookingsRouter } from "./routes/bookings";
 import { webhookRouter } from "./routes/webhook";
+import { adminRouter } from "./routes/admin";
 import { configurePassport } from "./config/passport";
 import { env } from "./config/env";
 
@@ -52,8 +53,7 @@ export function createApp() {
   app.use("/api/destinations", destinationsRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/bookings", bookingsRouter);
-  // Feature routers mount here as milestones land:
-  //   /api/admin (M4)
+  app.use("/api/admin", adminRouter);
 
   app.use(notFound);
   app.use(errorHandler);

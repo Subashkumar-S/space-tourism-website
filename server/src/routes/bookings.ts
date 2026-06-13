@@ -5,7 +5,8 @@ import { bookingLimiter } from "../middleware/rateLimit";
 import { HttpError } from "../middleware/error";
 import { Launch } from "../models/Launch";
 import { Booking } from "../models/Booking";
-import { reserveSeats, releaseSeats } from "../lib/seats";
+import { reserveSeats, releaseSeats, invalidateLaunchCache } from "../lib/seats";
+import { cancelOrRefundBooking } from "../lib/bookingLifecycle";
 import { stripe } from "../config/stripe";
 import { redis } from "../config/redis";
 import { env } from "../config/env";
@@ -39,6 +40,7 @@ bookingsRouter.post("/", checkAuthenticated, bookingLimiter, async (req, res, ne
     if (!reserved) throw new HttpError(409, "Not enough seats available");
     heldLaunchId = String(reserved._id);
     seatsHeld = seats;
+    await invalidateLaunchCache(reserved._id);
 
     const amount = reserved.pricePerSeat * seats;
     const expiresAt = new Date(Date.now() + env.BOOKING_HOLD_MINUTES * 60 * 1000);
@@ -96,12 +98,27 @@ bookingsRouter.post("/", checkAuthenticated, bookingLimiter, async (req, res, ne
     // Roll back the hold so a failed checkout never leaks inventory.
     if (heldLaunchId && seatsHeld) {
       await releaseSeats(heldLaunchId, seatsHeld).catch(() => undefined);
+      await invalidateLaunchCache(heldLaunchId).catch(() => undefined);
     }
     if (booking && booking.status === "pending") {
       booking.status = "cancelled";
       booking.cancelledAt = new Date();
       await booking.save().catch(() => undefined);
     }
+    next(err);
+  }
+});
+
+// POST /api/bookings/:id/cancel — the owner cancels (refund if confirmed) their booking.
+bookingsRouter.post("/:id/cancel", checkAuthenticated, async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking || String(booking.user) !== req.user!.id) {
+      throw new HttpError(404, "Booking not found");
+    }
+    await cancelOrRefundBooking(booking);
+    res.json({ id: booking._id, status: booking.status });
+  } catch (err) {
     next(err);
   }
 });

@@ -1,6 +1,8 @@
 import { Booking } from "../models/Booking";
-import { reserveSeats, releaseSeats } from "./seats";
+import { reserveSeats, releaseSeats, invalidateLaunchCache } from "./seats";
 import { redis } from "../config/redis";
+import { stripe } from "../config/stripe";
+import { sendBookingConfirmation } from "./email";
 
 // Minimal shape of the Stripe Checkout Session fields we actually read.
 export interface CheckoutSessionLike {
@@ -16,6 +18,26 @@ async function clearHold(bookingId: string): Promise<void> {
   }
 }
 
+async function emailConfirmation(booking: InstanceType<typeof Booking>): Promise<void> {
+  try {
+    const populated = (await Booking.findById(booking._id)
+      .populate("user", "name email")
+      .populate({ path: "launch", populate: { path: "destination", select: "name" } })
+      .lean()) as any;
+    if (!populated?.user?.email) return;
+    await sendBookingConfirmation({
+      to: populated.user.email,
+      name: populated.user.name,
+      destination: populated.launch?.destination?.name || "your destination",
+      departAt: populated.launch?.departAt,
+      seats: populated.seats,
+      amount: populated.amount,
+    });
+  } catch (err) {
+    console.error("Confirmation email failed:", err);
+  }
+}
+
 // checkout.session.completed → confirm. Idempotent: re-confirming is a no-op.
 export async function confirmBookingBySession(
   session: CheckoutSessionLike
@@ -25,8 +47,7 @@ export async function confirmBookingBySession(
   if (booking.status === "confirmed" || booking.status === "refunded") return;
 
   if (booking.status === "cancelled") {
-    // A sweeper/expiry already released the seats; re-acquire before confirming so we
-    // never confirm a paid booking we can't seat.
+    // A sweeper/expiry already released the seats; re-acquire before confirming.
     const reserved = await reserveSeats(String(booking.launch), booking.seats);
     if (!reserved) {
       console.warn(`overbook avoided: booking ${booking._id} paid but no seats left`);
@@ -41,6 +62,7 @@ export async function confirmBookingBySession(
   }
   await booking.save();
   await clearHold(booking._id.toString());
+  await emailConfirmation(booking);
 }
 
 // checkout.session.expired → cancel a still-pending booking and restore its seats.
@@ -54,11 +76,11 @@ export async function expireBookingBySession(
   booking.cancelledAt = new Date();
   await booking.save();
   await releaseSeats(String(booking.launch), booking.seats);
+  await invalidateLaunchCache(String(booking.launch));
   await clearHold(booking._id.toString());
 }
 
 // Periodic backstop: release seats for pending bookings whose hold has lapsed.
-// A grace window lets Stripe's completed/expired webhooks win the race first.
 export async function sweepExpiredBookings(): Promise<number> {
   const graceMs = 2 * 60 * 1000;
   const expired = await Booking.find({
@@ -71,7 +93,40 @@ export async function sweepExpiredBookings(): Promise<number> {
     booking.cancelledAt = new Date();
     await booking.save();
     await releaseSeats(String(booking.launch), booking.seats);
+    await invalidateLaunchCache(String(booking.launch));
     await clearHold(booking._id.toString());
   }
   return expired.length;
+}
+
+// User cancel / admin refund: refund a confirmed booking (or cancel a pending one),
+// restore its seats, and expire any open checkout session. Idempotent.
+export async function cancelOrRefundBooking(
+  booking: InstanceType<typeof Booking>
+): Promise<InstanceType<typeof Booking>> {
+  if (booking.status === "cancelled" || booking.status === "refunded") return booking;
+
+  if (booking.status === "confirmed") {
+    if (stripe && booking.stripePaymentIntentId) {
+      await stripe.refunds.create({ payment_intent: booking.stripePaymentIntentId });
+    }
+    booking.status = "refunded";
+  } else {
+    // pending: expire the open checkout session so it can't still be paid
+    if (stripe && booking.stripeSessionId) {
+      try {
+        await stripe.checkout.sessions.expire(booking.stripeSessionId);
+      } catch {
+        /* already closed/expired */
+      }
+    }
+    booking.status = "cancelled";
+  }
+
+  booking.cancelledAt = new Date();
+  await booking.save();
+  await releaseSeats(String(booking.launch), booking.seats);
+  await invalidateLaunchCache(String(booking.launch));
+  await clearHold(booking._id.toString());
+  return booking;
 }

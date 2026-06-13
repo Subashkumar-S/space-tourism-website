@@ -8,7 +8,9 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Booking from "./Pages/Booking";
 import MyTrips from "./Pages/MyTrips";
+import Admin from "./Pages/Admin";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import AdminRoute from "./Components/AdminRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 const App = () =>{
@@ -24,6 +26,7 @@ const App = () =>{
                     <Route path='/signup' element={<Signup/>}></Route>
                     <Route path='/book/:slug' element={<ProtectedRoute><Booking/></ProtectedRoute>}></Route>
                     <Route path='/my-trips' element={<ProtectedRoute><MyTrips/></ProtectedRoute>}></Route>
+                    <Route path='/admin' element={<AdminRoute><Admin/></AdminRoute>}></Route>
                 </Routes>
             </Router>
         </AuthProvider>
