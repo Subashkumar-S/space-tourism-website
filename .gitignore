@@ -1,23 +1,22 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Monorepo-wide ignores. The CRA app keeps its own client/.gitignore;
+# this file covers the server and repo root.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Dependencies (any package: client, server, root)
+node_modules/
 
-# testing
-/coverage
+# Server build output
+server/dist/
 
-# production
-/build
-
-# misc
-.DS_Store
+# Environment secrets — never commit. Templates (*.env.example) are tracked.
+.env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# OS / editor cruft
+.DS_Store
