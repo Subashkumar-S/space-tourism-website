@@ -55,15 +55,13 @@ function Navbar(){
                     {user ? (
                         <>
                             <li>
-                                <Link to="/my-trips" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/my-trips' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
-                                    <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
-                                    MY TRIPS
+                                <Link to="/account" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/account' || location.pathname === '/my-trips' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
+                                    ACCOUNT
                                 </Link>
                             </li>
                             {user.role === 'admin' && (
                                 <li>
                                     <Link to="/admin" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname.startsWith('/admin') ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
-                                        <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>05</span>
                                         ADMIN
                                     </Link>
                                 </li>
@@ -77,7 +75,6 @@ function Navbar(){
                     ) : (
                         <li>
                             <Link to="/login" className={`border-b-2 hover:border-white py-7 inline-block ${location.pathname === '/login' || location.pathname === '/signup' ? 'border-b-active-white' : ' border-transparent hover:border-opacity-50 '}`}>
-                                <span className='pr-[1vw] font-bold md0:hidden lg:inline-block'>04</span>
                                 LOG IN
                             </Link>
                         </li>

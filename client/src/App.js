@@ -7,7 +7,7 @@ import Technology from "./Pages/Technology";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Booking from "./Pages/Booking";
-import MyTrips from "./Pages/MyTrips";
+import Account from "./Pages/Account";
 import Admin from "./Pages/Admin";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import AdminRoute from "./Components/AdminRoute";
@@ -25,7 +25,9 @@ const App = () =>{
                     <Route path='/login' element={<Login/>}></Route>
                     <Route path='/signup' element={<Signup/>}></Route>
                     <Route path='/book/:slug' element={<ProtectedRoute><Booking/></ProtectedRoute>}></Route>
-                    <Route path='/my-trips' element={<ProtectedRoute><MyTrips/></ProtectedRoute>}></Route>
+                    <Route path='/account' element={<ProtectedRoute><Account/></ProtectedRoute>}></Route>
+                    {/* Legacy path kept for Stripe success/cancel redirects */}
+                    <Route path='/my-trips' element={<ProtectedRoute><Account/></ProtectedRoute>}></Route>
                     <Route path='/admin' element={<AdminRoute><Admin/></AdminRoute>}></Route>
                 </Routes>
             </Router>
