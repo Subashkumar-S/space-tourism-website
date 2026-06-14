@@ -1,0 +1,60 @@
+# Full containerized stack: mongo + redis + server + client.
+# Everything runs in Docker; the client (nginx) serves the CRA build and
+# reverse-proxies /api to the server, so the whole app is reachable at :3000.
+#
+#   docker compose -f deploy/docker-compose.yml up --build      # start everything
+#   open http://localhost:3000                                  # client (+ /api proxy)
+#   docker compose -f deploy/docker-compose.yml down            # stop
+#
+# Requires ../server/.env (copy ../server/.env.example, set SECRET).
+#
+# For day-to-day development prefer docker-compose.dev.yml (infra only) and run the
+# client + server natively — faster feedback with hot reload.
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  server:
+    build:
+      context: ../server
+      target: production
+    restart: unless-stopped
+    env_file:
+      - ../server/.env
+    # Override env_file so datastores resolve to the compose network hostnames.
+    # NOTE: NODE_ENV=production enables secure + SameSite=None cookies. Health works
+    # over plain http; once auth lands (M2), front this with HTTPS for sessions.
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      MONGODB_URI: mongodb://mongo:27017/space-tourism
+      REDIS_URL: redis://redis:6379
+      CLIENT_ORIGIN: http://localhost:3000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+      - redis
+
+  client:
+    build:
+      context: ../client
+      args:
+        # Same-origin: the browser calls /api on the client and nginx proxies it.
+        REACT_APP_API_BASE_URL: /api
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:

@@ -1,0 +1,142 @@
+import React, { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import Navbar from '../Components/Navbar'
+import { useAuth } from '../context/AuthContext'
+import { apiGet, apiPost } from '../api/client'
+import destinationImages from '../utils/destinationImages'
+import { formatUSD, formatLaunchDate } from '../utils/format'
+
+const STATUS_STYLE = {
+  confirmed: 'text-green-300 border-green-300/40',
+  pending: 'text-yellow-300 border-yellow-300/40',
+  cancelled: 'text-red-300 border-red-300/40',
+  refunded: 'text-blue-300 border-blue-300/40',
+}
+
+export default function Account() {
+  const { user } = useAuth()
+  const [trips, setTrips] = useState([])
+  const [status, setStatus] = useState('loading') // loading | error | ready
+  const [error, setError] = useState('')
+  const [params] = useSearchParams()
+  const banner = params.get('status') // success | cancelled
+
+  useEffect(() => {
+    let active = true
+    apiGet('/bookings/me')
+      .then((d) => { if (active) { setTrips(d); setStatus('ready') } })
+      .catch((err) => { if (active) { setError(err.message); setStatus('error') } })
+    return () => { active = false }
+  }, [])
+
+  const [cancelling, setCancelling] = useState(null)
+  const onCancel = async (id) => {
+    if (!window.confirm('Cancel this booking? Confirmed trips are refunded.')) return
+    setCancelling(id)
+    try {
+      const { status: newStatus } = await apiPost(`/bookings/${id}/cancel`, {})
+      setTrips((ts) => ts.map((t) => (t.id === id ? { ...t, status: newStatus } : t)))
+    } catch (e) {
+      alert(e.message)
+    } finally {
+      setCancelling(null)
+    }
+  }
+
+  const activeTrips = trips.filter((t) => t.status === 'pending' || t.status === 'confirmed')
+  const pastTrips = trips.filter((t) => t.status === 'cancelled' || t.status === 'refunded')
+
+  const renderTrip = (t) => (
+    <article key={t.id} className='flex items-center gap-4 border border-active-white/20 rounded-lg p-4 bg-[#0b0d17]/50'>
+      {t.destination && (
+        <img src={destinationImages[t.destination.imageKey]} alt={t.destination.name} className='w-16 h-16 object-contain hidden sm:block' />
+      )}
+      <div className='flex-1'>
+        <div className='flex items-center justify-between gap-3'>
+          <h3 className='uppercase font-Bellefair text-active-white text-xl'>{t.destination?.name || 'Trip'}</h3>
+          <span className={`uppercase text-xs tracking-widest font-Barlow border rounded px-2 py-1 ${STATUS_STYLE[t.status] || 'text-primary-white border-active-white/30'}`}>{t.status}</span>
+        </div>
+        <p className='font-Barlow text-primary-white/80 mt-1'>
+          Departs {t.launch ? formatLaunchDate(t.launch.departAt) : '—'} · {t.seats} seat(s) · {formatUSD(t.amount)}
+        </p>
+        <p className='font-Barlow text-primary-white/60 text-sm mt-1'>
+          Passengers: {t.passengers.join(', ')}
+        </p>
+        {(t.status === 'pending' || t.status === 'confirmed') && (
+          <button onClick={() => onCancel(t.id)} disabled={cancelling === t.id}
+            className='mt-2 uppercase text-xs tracking-widest font-Barlow border border-red-300/50 text-red-300 rounded px-3 py-1 hover:bg-red-300/10 disabled:opacity-50'>
+            {cancelling === t.id ? 'Cancelling…' : t.status === 'confirmed' ? 'Cancel & refund' : 'Cancel'}
+          </button>
+        )}
+      </div>
+    </article>
+  )
+
+  return (
+    <section className='w-full min-h-screen bg-home-mobile md:bg-home-tablet lg:bg-home-desktop bg-cover bg-no-repeat bg-center'>
+      <Navbar />
+      <main className='text-primary-white px-6 md:px-16 pb-16'>
+        <h1 className='uppercase font-Bellefair text-active-white text-4xl tracking-widest pt-6 mb-6'>Account</h1>
+
+        {/* Profile details */}
+        {user && (
+          <div className='max-w-3xl border border-active-white/20 rounded-lg p-6 bg-[#0b0d17]/50 mb-10'>
+            <div className='flex items-start justify-between gap-3'>
+              <div>
+                <p className='font-Barlow text-primary-white/50 uppercase tracking-widest text-xs'>Name</p>
+                <p className='font-Bellefair text-active-white text-2xl uppercase'>{user.name}</p>
+                <p className='font-Barlow text-primary-white/50 uppercase tracking-widest text-xs mt-4'>Email</p>
+                <p className='font-Barlow text-primary-white'>{user.email}</p>
+              </div>
+              {user.role === 'admin' && (
+                <Link to='/admin' className='uppercase text-xs tracking-widest font-Barlow border border-active-white/40 text-active-white rounded px-3 py-1 hover:bg-active-white/10'>
+                  Admin
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Trips */}
+        <h2 className='uppercase font-Bellefair text-active-white text-2xl tracking-widest mb-4'>Your Trips</h2>
+
+        {banner === 'success' && (
+          <p className='mb-6 font-Barlow border border-green-300/40 text-green-300 rounded px-4 py-3 max-w-3xl'>
+            Payment received. Your trip confirms within a few seconds once Stripe notifies us — refresh to see it update.
+          </p>
+        )}
+        {banner === 'cancelled' && (
+          <p className='mb-6 font-Barlow border border-yellow-300/40 text-yellow-300 rounded px-4 py-3 max-w-3xl'>
+            Checkout cancelled — your held seats have been released.
+          </p>
+        )}
+
+        {status === 'loading' && <p className='font-Barlow tracking-widest uppercase'>Loading…</p>}
+        {status === 'error' && <p className='font-Barlow text-red-300'>{error}</p>}
+
+        {status === 'ready' && trips.length === 0 && (
+          <p className='font-Barlow'>
+            No trips yet. <Link to='/destination' className='text-active-white underline'>Browse destinations</Link>.
+          </p>
+        )}
+
+        {status === 'ready' && trips.length > 0 && (
+          <div className='flex flex-col gap-8 max-w-3xl'>
+            {activeTrips.length > 0 && (
+              <div className='flex flex-col gap-4'>
+                {activeTrips.map(renderTrip)}
+              </div>
+            )}
+
+            {pastTrips.length > 0 && (
+              <div className='flex flex-col gap-4'>
+                <h3 className='uppercase font-Barlow text-primary-white/50 tracking-widest text-sm'>Cancelled &amp; refunded</h3>
+                {pastTrips.map(renderTrip)}
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+    </section>
+  )
+}
