@@ -7,6 +7,7 @@ import {
 } from "passport-google-oauth20";
 import bcrypt from "bcryptjs";
 import { User, toSessionUser } from "../models/User";
+import { applyAdminRole } from "../lib/adminRole";
 import { env } from "./env";
 
 export function configurePassport(): void {
@@ -24,6 +25,7 @@ export function configurePassport(): void {
           if (!ok) {
             return done(null, false, { message: "Invalid email or password" });
           }
+          await applyAdminRole(user);
           return done(null, toSessionUser(user));
         } catch (err) {
           return done(err as Error);
@@ -68,6 +70,7 @@ export function configurePassport(): void {
                 passwordHash: null,
               });
             }
+            await applyAdminRole(user);
             return done(null, toSessionUser(user));
           } catch (err) {
             return done(err as Error);

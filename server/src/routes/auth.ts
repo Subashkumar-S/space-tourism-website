@@ -3,6 +3,7 @@ import passport from "passport";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { User, toSessionUser, SessionUser } from "../models/User";
+import { applyAdminRole } from "../lib/adminRole";
 import { HttpError } from "../middleware/error";
 import { authLimiter } from "../middleware/rateLimit";
 import { env } from "../config/env";
@@ -32,6 +33,7 @@ authRouter.post("/signup", authLimiter, async (req, res, next) => {
 
     const passwordHash = await bcrypt.hash(password, 12);
     const user = await User.create({ name, email, passwordHash });
+    await applyAdminRole(user);
 
     req.login(toSessionUser(user), (err) => {
       if (err) return next(err);

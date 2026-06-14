@@ -32,6 +32,8 @@ const envSchema = z.object({
   // Email (optional). When RESEND_API_KEY is set, confirmation emails are sent.
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("Space Tourism <onboarding@resend.dev>"),
+  // Comma-separated emails auto-promoted to admin on signup/login (bootstrap).
+  ADMIN_EMAILS: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -50,4 +52,8 @@ export const env = {
   ),
   stripeEnabled: Boolean(parsed.data.STRIPE_SECRET_KEY),
   emailEnabled: Boolean(parsed.data.RESEND_API_KEY),
+  adminEmails: (parsed.data.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
 };
