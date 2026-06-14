@@ -1,26 +1,34 @@
 # Full containerized stack: mongo + redis + server + client.
 # Everything runs in Docker; the client (nginx) serves the CRA build and
-# reverse-proxies /api to the server, so the whole app is reachable at :3000.
+# reverse-proxies /api to the server, so the whole app is same-origin.
 #
 #   docker compose -f deploy/docker-compose.yml up --build      # start everything
-#   open http://localhost:3000                                  # client (+ /api proxy)
 #   docker compose -f deploy/docker-compose.yml down            # stop
 #
-# Requires ../server/.env (copy ../server/.env.example, set SECRET).
+# Compose-level variables are prefixed with SPACE_ so this project never collides
+# with the other projects on a shared host/.env. The in-container names (left of
+# the colon) are what the app reads and stay unprefixed. Every value has a safe
+# default, so the stack comes up with no extra config.
 #
-# For day-to-day development prefer docker-compose.dev.yml (infra only) and run the
-# client + server natively — faster feedback with hot reload.
+# Container-internal secrets (SECRET, Stripe, Google, Resend, …) come from
+# ../server/.env via env_file — that file is per-project, so those names are
+# already isolated and are NOT prefixed (the app reads them directly).
+#
+# For day-to-day development prefer docker-compose.dev.yml (infra only) and run
+# the client + server natively — faster feedback with hot reload.
 
 services:
   mongo:
     image: mongo:7
     restart: unless-stopped
+    # Internal only — reached over the compose network, never published.
     volumes:
       - mongo-data:/data/db
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    # Internal only — reached over the compose network, never published.
 
   server:
     build:
@@ -29,17 +37,17 @@ services:
     restart: unless-stopped
     env_file:
       - ../server/.env
-    # Override env_file so datastores resolve to the compose network hostnames.
-    # NOTE: NODE_ENV=production enables secure + SameSite=None cookies. Health works
-    # over plain http; once auth lands (M2), front this with HTTPS for sessions.
+    # The `environment` block overrides env_file so the shared, collision-prone
+    # values are env-configurable per project (SPACE_*) and default to the
+    # compose-network hostnames for the all-in-docker stack.
     environment:
-      NODE_ENV: production
-      PORT: "5000"
-      MONGODB_URI: mongodb://mongo:27017/space-tourism
-      REDIS_URL: redis://redis:6379
-      CLIENT_ORIGIN: http://localhost:3000
+      NODE_ENV: "${SPACE_NODE_ENV:-production}"
+      PORT: "${SPACE_PORT:-5000}"
+      MONGODB_URI: "${SPACE_MONGODB_URI:-mongodb://mongo:27017/space-tourism}"
+      REDIS_URL: "${SPACE_REDIS_URL:-redis://redis:6379}"
+      CLIENT_ORIGIN: "${SPACE_CLIENT_ORIGIN:-http://localhost:8082}"
     ports:
-      - "5000:5000"
+      - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_SERVER_HOST_PORT:-8092}:${SPACE_PORT:-5000}"
     depends_on:
       - mongo
       - redis
@@ -48,11 +56,11 @@ services:
     build:
       context: ../client
       args:
-        # Same-origin: the browser calls /api on the client and nginx proxies it.
-        REACT_APP_API_BASE_URL: /api
+        # Same-origin: the browser calls /api and nginx proxies it to the server.
+        REACT_APP_API_BASE_URL: "${SPACE_API_BASE_URL:-/api}"
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_CLIENT_HOST_PORT:-8082}:80"
     depends_on:
       - server
 
