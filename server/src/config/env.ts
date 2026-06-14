@@ -1,7 +1,21 @@
 import dotenv from "dotenv";
+import path from "path";
 import { z } from "zod";
 
-dotenv.config();
+// Single env file for the whole project: the repo-root .env (three levels up from
+// both server/src/config and server/dist/config). In Docker no such file exists —
+// Compose injects the vars instead — so dotenv just no-ops on the miss.
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+
+// That root .env is SPACE_-prefixed so it never clashes with the sibling projects
+// on a shared host. Alias each SPACE_FOO to the plain FOO the app reads. Blanks
+// are skipped so the schema defaults below still apply, and an existing FOO (e.g.
+// injected by Compose in Docker) is never overwritten.
+for (const [key, value] of Object.entries(process.env)) {
+  if (key.startsWith("SPACE_") && value && !process.env[key.slice(6)]) {
+    process.env[key.slice(6)] = value;
+  }
+}
 
 // Core configuration validated at boot. Provider keys (Stripe, Google, Resend) are
 // added to this schema in their respective milestones (M2/M3/M4).

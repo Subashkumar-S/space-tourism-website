@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "../../config/env"; // loads the repo-root .env (SPACE_* aliased to plain names)
 import Stripe from "stripe";
 
 // Cleanup helper for the Stripe TEST account. Checkout Sessions built with inline
@@ -13,8 +13,6 @@ import Stripe from "stripe";
 //
 // Notes: succeeded payments are immutable (cannot be deleted); prices can only be
 // archived (active:false), not deleted; products with prices are archived. Test only.
-
-dotenv.config();
 
 function parseArgs(argv: string[]): Record<string, boolean> {
   const args: Record<string, boolean> = {};

@@ -1,13 +1,15 @@
 # Local development — INFRA ONLY (mongo + redis).
 # Run the client and server natively on your machine against these containers:
 #
-#   docker compose -f deploy/docker-compose.dev.yml up -d   # start mongo + redis
+#   cp .env.example .env                                    # once: fill in SPACE_SECRET
+#   docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d   # mongo + redis
 #   cd server && npm install && npm run dev                 # API on :5000 (tsx watch)
 #   cd client && npm install && npm start                   # CRA on :3000
-#   docker compose -f deploy/docker-compose.dev.yml down    # stop infra
+#   docker compose --env-file .env -f deploy/docker-compose.dev.yml down    # stop infra
 #
-# Ports are published to the host so the native processes connect via localhost
-# (server/.env defaults to mongodb://localhost:27017 and redis://localhost:6379).
+# Ports are published to the host so the native processes connect via localhost.
+# The server reads the single repo-root .env; its schema defaults to
+# mongodb://localhost:27017 and redis://localhost:6379 when those URLs are blank.
 
 services:
   mongo:

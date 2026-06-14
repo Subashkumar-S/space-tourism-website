@@ -1,9 +1,9 @@
-import dotenv from "dotenv";
+import "../../config/env"; // loads the repo-root .env (SPACE_* aliased to plain names)
 import Stripe from "stripe";
 
-// Standalone Stripe test-payment helper. Reads STRIPE_SECRET_KEY from server/.env
-// fresh on every run (so it doubles as a check that your key works, independent of
-// whether the API server has been restarted).
+// Standalone Stripe test-payment helper. Reads STRIPE_SECRET_KEY from the repo-root
+// .env fresh on every run (so it doubles as a check that your key works, independent
+// of whether the API server has been restarted).
 //
 //   npm run stripe:pay                     # create 1 succeeded test payment
 //   npm run stripe:pay -- --count 3        # create 3
@@ -11,8 +11,6 @@ import Stripe from "stripe";
 //   npm run stripe:pay -- --checkout       # instead create a hosted Checkout URL
 //
 // Test mode only — it refuses to run against a live key.
-
-dotenv.config();
 
 function parseArgs(argv: string[]): Record<string, string> {
   const args: Record<string, string> = {};

@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "../../config/env"; // loads the repo-root .env (SPACE_* aliased to plain names)
 import Stripe from "stripe";
 
 // Create Stripe products + one-time prices in the TEST account.
@@ -8,8 +8,6 @@ import Stripe from "stripe";
 //   npm run stripe:products -- --count 3 --amount 500000 # cents each (default 2_500_000)
 //
 // Test mode only.
-
-dotenv.config();
 
 function parseArgs(argv: string[]): Record<string, string> {
   const args: Record<string, string> = {};

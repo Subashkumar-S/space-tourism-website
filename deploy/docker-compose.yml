@@ -2,17 +2,17 @@
 # Everything runs in Docker; the client (nginx) serves the CRA build and
 # reverse-proxies /api to the server, so the whole app is same-origin.
 #
-#   docker compose -f deploy/docker-compose.yml up --build      # start everything
-#   docker compose -f deploy/docker-compose.yml down            # stop
+#   docker compose --env-file .env -f deploy/docker-compose.yml up --build   # start
+#   docker compose --env-file .env -f deploy/docker-compose.yml down          # stop
 #
-# Compose-level variables are prefixed with SPACE_ so this project never collides
-# with the other projects on a shared host/.env. The in-container names (left of
-# the colon) are what the app reads and stay unprefixed. Every value has a safe
-# default, so the stack comes up with no extra config.
-#
-# Container-internal secrets (SECRET, Stripe, Google, Resend, …) come from
-# ../server/.env via env_file — that file is per-project, so those names are
-# already isolated and are NOT prefixed (the app reads them directly).
+# Everything reads the SINGLE repo-root .env (copy .env.example -> .env). Its keys
+# are prefixed SPACE_ so this project never collides with the other projects on
+# the shared host. The server service gets the whole file via env_file and the app
+# aliases SPACE_FOO -> FOO at boot (server/src/config/env.ts); the in-container
+# names below then override the host-specific values. Every value has a safe
+# default, so the stack comes up with just SPACE_SECRET set.
+# Exception: REACT_APP_API_BASE_URL keeps its CRA prefix (CRA only exposes
+# REACT_APP_*) and feeds the client build arg.
 #
 # For day-to-day development prefer docker-compose.dev.yml (infra only) and run
 # the client + server natively — faster feedback with hot reload.
@@ -36,10 +36,11 @@ services:
       target: production
     restart: unless-stopped
     env_file:
-      - ../server/.env
-    # The `environment` block overrides env_file so the shared, collision-prone
-    # values are env-configurable per project (SPACE_*) and default to the
-    # compose-network hostnames for the all-in-docker stack.
+      - ../.env
+    # env_file injects the SPACE_-prefixed root .env; the app aliases SPACE_FOO ->
+    # FOO at boot. The `environment` block below then overrides the host-specific
+    # values, defaulting to the compose-network hostnames for the all-in-docker
+    # stack (environment wins over env_file for the same key).
     environment:
       NODE_ENV: "${SPACE_NODE_ENV:-production}"
       PORT: "${SPACE_PORT:-5000}"
@@ -57,7 +58,9 @@ services:
       context: ../client
       args:
         # Same-origin: the browser calls /api and nginx proxies it to the server.
-        REACT_APP_API_BASE_URL: "${SPACE_API_BASE_URL:-/api}"
+        # Keeps the REACT_APP_ prefix (CRA only exposes REACT_APP_*), so it is read
+        # straight from the root .env rather than via a SPACE_-prefixed alias.
+        REACT_APP_API_BASE_URL: "${REACT_APP_API_BASE_URL:-/api}"
     restart: unless-stopped
     ports:
       - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_CLIENT_HOST_PORT:-8082}:80"
