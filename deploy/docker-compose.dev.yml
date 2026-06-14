@@ -14,7 +14,7 @@ services:
     image: mongo:7
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_MONGO_HOST_PORT:-27017}:27017"
     volumes:
       - mongo-dev-data:/data/db
 
@@ -22,7 +22,7 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_REDIS_HOST_PORT:-6379}:6379"
 
 volumes:
   mongo-dev-data:
