@@ -17,6 +17,13 @@ async function main(): Promise<void> {
     console.log(
       `🚀 Server listening on http://localhost:${env.PORT} (${env.NODE_ENV})`
     );
+    // Surface the resolved public URLs so they're easy to register externally.
+    if (env.googleEnabled) {
+      console.log(`   Google OAuth callback: ${env.GOOGLE_CALLBACK_URL}`);
+    }
+    if (env.stripeEnabled) {
+      console.log(`   Stripe webhook endpoint: ${env.webhookUrl}`);
+    }
   });
 }
 

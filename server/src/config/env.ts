@@ -28,14 +28,19 @@ const envSchema = z.object({
   // The full Docker stack and cloud/prod override these via environment.
   MONGODB_URI: z.string().min(1).default("mongodb://localhost:27017/space-tourism"),
   REDIS_URL: z.string().min(1).default("redis://localhost:6379"),
-  CLIENT_ORIGIN: z.string().min(1).default("http://localhost:3000"),
+  // Public origin of the app. In the same-origin deploy the client and /api share
+  // one URL, so this single knob drives CLIENT_ORIGIN, the Google callback, and the
+  // Stripe success/cancel + webhook URLs (all resolved below). Leave unset for
+  // native dev — the client (:3000) and api (:5000) use their localhost defaults.
+  APP_URL: z.string().url().optional(),
+  // Explicit overrides — only needed when they must differ from APP_URL. Each
+  // falls back to APP_URL, then to a localhost dev default (resolved below).
+  CLIENT_ORIGIN: z.string().min(1).optional(),
   // Google OAuth (optional). When both ID and secret are present the Google
   // strategy is registered; otherwise only local email/password auth is available.
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CALLBACK_URL: z
-    .string()
-    .default("http://localhost:5000/api/auth/google/callback"),
+  GOOGLE_CALLBACK_URL: z.string().optional(),
   // Stripe (test mode). When STRIPE_SECRET_KEY is set the booking pay flow is live;
   // otherwise POST /api/bookings returns 503 and the rest of the app still runs.
   STRIPE_SECRET_KEY: z.string().optional(),
@@ -58,8 +63,25 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+// Resolve the public URLs from one APP_URL, with explicit vars overriding and a
+// localhost dev default last. appUrl = same-origin public base (client + api);
+// apiBase = where /api lives (appUrl in deploy, localhost:PORT in native dev).
+const appUrl = parsed.data.APP_URL?.replace(/\/+$/, "");
+const apiBase = appUrl ?? `http://localhost:${parsed.data.PORT}`;
+const clientOrigin = parsed.data.CLIENT_ORIGIN ?? appUrl ?? "http://localhost:3000";
+const googleCallbackUrl =
+  parsed.data.GOOGLE_CALLBACK_URL ?? `${apiBase}/api/auth/google/callback`;
+// The endpoint Stripe POSTs events to — register this URL in the Stripe dashboard.
+const webhookUrl = `${apiBase}/api/webhooks/stripe`;
+
 export const env = {
   ...parsed.data,
+  // Resolved URLs override the raw parsed values, so all consumers stay unchanged.
+  CLIENT_ORIGIN: clientOrigin,
+  GOOGLE_CALLBACK_URL: googleCallbackUrl,
+  appUrl,
+  apiBase,
+  webhookUrl,
   isProd: parsed.data.NODE_ENV === "production",
   googleEnabled: Boolean(
     parsed.data.GOOGLE_CLIENT_ID && parsed.data.GOOGLE_CLIENT_SECRET

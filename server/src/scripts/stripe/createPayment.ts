@@ -1,4 +1,4 @@
-import "../../config/env"; // loads the repo-root .env (SPACE_* aliased to plain names)
+import { env } from "../../config/env"; // loads the root .env + resolves public URLs
 import Stripe from "stripe";
 
 // Standalone Stripe test-payment helper. Reads STRIPE_SECRET_KEY from the repo-root
@@ -54,7 +54,7 @@ async function main(): Promise<void> {
   // --checkout: create a hosted Checkout Session (what the booking flow uses) and
   // print the URL so you can pay with the test card in a browser.
   if (args.checkout) {
-    const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+    const clientOrigin = env.CLIENT_ORIGIN;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: [
