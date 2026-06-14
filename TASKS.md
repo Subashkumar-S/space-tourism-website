@@ -110,12 +110,14 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
 
 ## M5 — Ship
 
-- [ ] Deploy API (Render/Railway/Fly) with **Atlas** + **Upstash** via env.
+- [x] Prod config ready (platform-independent): cookie `secure + sameSite:none`,
+      `trust proxy`, CORS `credentials:true` + `CLIENT_ORIGIN`, client reads
+      `REACT_APP_API_BASE_URL`. `ADMIN_EMAILS` bootstrap for admin role.
+- [x] README rewrite (architecture note + how-to-admin + test card `4242…`).
+- [ ] Deploy API (host TBD) with **Atlas** + **Upstash** via env.
 - [ ] Register prod **Stripe webhook** endpoint; copy signing secret to env.
-- [ ] Client on Firebase Hosting; set `REACT_APP_API_BASE_URL`; cookie
-      `secure + sameSite:none`; CORS `credentials:true`.
+- [ ] Client on Firebase Hosting; set `REACT_APP_API_BASE_URL` to deployed API.
 - [ ] Google OAuth prod redirect URI.
-- [ ] README rewrite (architecture note + **demo creds** + test card `4242…`).
 - [ ] Portfolio entry update (ROADMAP §14).
 
 ---
