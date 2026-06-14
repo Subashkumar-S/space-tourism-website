@@ -20,6 +20,7 @@
 services:
   mongo:
     image: mongo:7
+    container_name: space-tourism-mongo
     restart: unless-stopped
     # Internal only — reached over the compose network, never published.
     volumes:
@@ -27,6 +28,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: space-tourism-redis
     restart: unless-stopped
     # Internal only — reached over the compose network, never published.
 
@@ -34,6 +36,7 @@ services:
     build:
       context: ../server
       target: production
+    container_name: space-tourism-server
     restart: unless-stopped
     env_file:
       - ../.env
@@ -64,6 +67,7 @@ services:
         # Keeps the REACT_APP_ prefix (CRA only exposes REACT_APP_*), so it is read
         # straight from the root .env rather than via a SPACE_-prefixed alias.
         REACT_APP_API_BASE_URL: "${REACT_APP_API_BASE_URL:-/api}"
+    container_name: space-tourism-client
     restart: unless-stopped
     ports:
       - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_CLIENT_HOST_PORT:-8082}:80"

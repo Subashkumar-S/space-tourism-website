@@ -14,6 +14,7 @@
 services:
   mongo:
     image: mongo:7
+    container_name: space-tourism-mongo-dev
     restart: unless-stopped
     ports:
       - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_MONGO_HOST_PORT:-27017}:27017"
@@ -22,6 +23,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: space-tourism-redis-dev
     restart: unless-stopped
     ports:
       - "${SPACE_BIND_IP:-127.0.0.1}:${SPACE_REDIS_HOST_PORT:-6379}:6379"
