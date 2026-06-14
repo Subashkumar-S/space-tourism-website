@@ -41,10 +41,10 @@ no real money moves.
 
 ## Documentation
 
-- **[TECH_STACK.md](TECH_STACK.md)** — architecture, technology choices, local setup,
-  API reference, and deployment.
-- **[ROADMAP.md](ROADMAP.md)** — the product vision and milestones.
-- **[TASKS.md](TASKS.md)** — milestone task tracker.
+- **[docs/TECH_STACK.md](docs/TECH_STACK.md)** — architecture, technology choices,
+  local setup, API reference, and deployment.
+- **[docs/ROADMAP.md](docs/ROADMAP.md)** — the product vision and milestones.
+- **[docs/TASKS.md](docs/TASKS.md)** — milestone task tracker.
 
 ## Credits
 

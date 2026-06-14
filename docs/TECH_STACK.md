@@ -1,6 +1,6 @@
 # Tech Stack & Architecture
 
-Technical companion to [`README.md`](README.md). This document explains the technology
+Technical companion to [`README.md`](../README.md). This document explains the technology
 choices, the architecture, how to run the project locally, the API surface, and how to
 ship it.
 
@@ -183,7 +183,7 @@ All routes are prefixed with `/api`. Auth uses the session cookie (`credentials:
 
 ## Configuration
 
-See [`server/.env.example`](server/.env.example) for the full list. Highlights:
+See [`server/.env.example`](../server/.env.example) for the full list. Highlights:
 
 | Var | Required | Notes |
 | --- | --- | --- |
@@ -207,5 +207,5 @@ To ship: point `MONGODB_URI`/`REDIS_URL` at managed services (e.g. MongoDB Atlas
 Upstash), deploy the API container, register a production Stripe webhook and set its
 signing secret, set `CLIENT_ORIGIN` to the deployed client URL, add the Google OAuth
 production redirect URI, and host the client build (e.g. Firebase Hosting — config in
-[`deploy/firebase.json`](deploy/firebase.json)). See [`TASKS.md`](TASKS.md) (M5) for
+[`deploy/firebase.json`](../deploy/firebase.json)). See [`TASKS.md`](TASKS.md) (M5) for
 the checklist.
