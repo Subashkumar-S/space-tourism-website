@@ -1,15 +1,21 @@
 # Local development — INFRA ONLY (mongo + redis).
-# Run the client and server natively on your machine against these containers:
+# Lives at the repo root. Run the client and server natively on your machine
+# against these containers:
 #
 #   cp .env.example .env                                    # once: fill in SPACE_SECRET
-#   docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d   # mongo + redis
+#   docker compose -f docker-compose.dev.yml up -d          # mongo + redis
 #   cd server && npm install && npm run dev                 # API on :5000 (tsx watch)
 #   cd client && npm install && npm start                   # CRA on :3000
-#   docker compose --env-file .env -f deploy/docker-compose.dev.yml down    # stop infra
+#   docker compose -f docker-compose.dev.yml down           # stop infra
+#
+# Separate project name (`space-tourism-dev`), container names, and volume from the
+# full docker-compose.yml stack, so the two never clash.
 #
 # Ports are published to the host so the native processes connect via localhost.
 # The server reads the single repo-root .env; its schema defaults to
 # mongodb://localhost:27017 and redis://localhost:6379 when those URLs are blank.
+
+name: space-tourism-dev
 
 services:
   mongo:

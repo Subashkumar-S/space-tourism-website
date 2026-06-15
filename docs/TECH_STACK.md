@@ -79,7 +79,7 @@ server/src/
 ### 1. Start infrastructure (Mongo + Redis)
 
 ```bash
-docker compose -f deploy/docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 ### 2. Configure and run the API
@@ -108,7 +108,7 @@ npm start              # http://localhost:3000
 Runs everything (Mongo, Redis, API, and the client behind nginx with an `/api` proxy):
 
 ```bash
-docker compose -f deploy/docker-compose.yml up --build
+docker compose -f docker-compose.yml up --build
 ```
 
 ## Becoming an admin

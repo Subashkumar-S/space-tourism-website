@@ -8,14 +8,14 @@ Checked items are done. Milestones run **M0 → M5**; only **M0** is built so fa
 
 **Run it — local dev (recommended):** infra in Docker, app native, hot reload.
 ```bash
-docker compose -f deploy/docker-compose.dev.yml up -d   # mongo + redis
+docker compose -f docker-compose.dev.yml up -d   # mongo + redis
 cd server && npm install && npm run dev                 # API  → :5000
 cd client && npm install && npm start                   # CRA  → :3000
 ```
 
 **Run it — full stack in Docker:** everything containerized, app at `:3000`.
 ```bash
-docker compose -f deploy/docker-compose.yml up --build   # mongo + redis + server + client
+docker compose -f docker-compose.yml up --build   # mongo + redis + server + client
 ```
 Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
 
@@ -40,8 +40,8 @@ Both need `server/.env` (copy `server/.env.example`, set `SECRET`).
 - [x] `index.ts` — connect Mongo + Redis, then listen.
 - [x] Server `Dockerfile` (multi-stage: deps/dev/build/production) + `.dockerignore`.
 - [x] Client `Dockerfile` (build → nginx) + `nginx.conf` reverse-proxying `/api`.
-- [x] `deploy/docker-compose.yml` (full stack: mongo+redis+server+client) and
-      `deploy/docker-compose.dev.yml` (infra-only for native client+server dev).
+- [x] `docker-compose.yml` (full stack: mongo+redis+server+client) and
+      `docker-compose.dev.yml` (infra-only for native client+server dev).
 - [x] `server/.env.example`; root `.gitignore` (server/.env, dist, node_modules).
 - [x] Verified end-to-end: health 200, 404 JSON, CORS credentials header.
 

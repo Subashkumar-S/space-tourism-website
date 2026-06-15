@@ -24,7 +24,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   // Session signing secret — required, no default. Boot fails loudly if missing.
   SECRET: z.string().min(1, "SECRET is required"),
-  // Default to localhost for native dev against deploy/docker-compose.dev.yml.
+  // Default to localhost for native dev against docker-compose.dev.yml.
   // The full Docker stack and cloud/prod override these via environment.
   MONGODB_URI: z.string().min(1).default("mongodb://localhost:27017/space-tourism"),
   REDIS_URL: z.string().min(1).default("redis://localhost:6379"),

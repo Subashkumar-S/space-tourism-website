@@ -2,8 +2,13 @@
 # Everything runs in Docker; the client (nginx) serves the CRA build and
 # reverse-proxies /api to the server, so the whole app is same-origin.
 #
-#   docker compose --env-file .env -f deploy/docker-compose.yml up --build   # start
-#   docker compose --env-file .env -f deploy/docker-compose.yml down          # stop
+# Lives at the repo root and reads the repo-root .env automatically. Run from the
+# repo root:
+#   docker compose up -d --build      # start everything
+#   docker compose down               # stop
+#
+# An explicit project name (below) keeps this stack isolated from the sibling
+# projects regardless of the directory it's run from.
 #
 # Everything reads the SINGLE repo-root .env (copy .env.example -> .env). Its keys
 # are prefixed SPACE_ so this project never collides with the other projects on
@@ -16,6 +21,8 @@
 #
 # For day-to-day development prefer docker-compose.dev.yml (infra only) and run
 # the client + server natively — faster feedback with hot reload.
+
+name: space-tourism
 
 services:
   mongo:
@@ -34,12 +41,12 @@ services:
 
   server:
     build:
-      context: ../server
+      context: ./server
       target: production
     container_name: space-tourism-server
     restart: unless-stopped
     env_file:
-      - ../.env
+      - ./.env
     # env_file injects the SPACE_-prefixed root .env; the app aliases SPACE_FOO ->
     # FOO at boot. The `environment` block below then overrides the host-specific
     # values, defaulting to the compose-network hostnames for the all-in-docker
@@ -61,7 +68,7 @@ services:
 
   client:
     build:
-      context: ../client
+      context: ./client
       args:
         # Same-origin: the browser calls /api and nginx proxies it to the server.
         # Keeps the REACT_APP_ prefix (CRA only exposes REACT_APP_*), so it is read
