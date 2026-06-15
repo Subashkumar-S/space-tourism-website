@@ -38,6 +38,9 @@ services:
     container_name: space-tourism-redis
     restart: unless-stopped
     # Internal only — reached over the compose network, never published.
+    # Persist sessions across redeploys (parity with mongo; default RDB snapshots).
+    volumes:
+      - redis-data:/data
 
   server:
     build:
@@ -83,3 +86,4 @@ services:
 
 volumes:
   mongo-data:
+  redis-data:
